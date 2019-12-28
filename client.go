@@ -2,13 +2,12 @@ package astitwitter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
-
-	"fmt"
 	"strings"
 
-	astihttp "github.com/asticode/go-astitools/http"
+	"github.com/asticode/go-astikit"
 	"github.com/pkg/errors"
 )
 
@@ -21,7 +20,7 @@ const (
 type Client struct {
 	apiKey       string
 	apiSecretKey string
-	s            *astihttp.Sender
+	s            *astikit.HTTPSender
 	t            string
 }
 
@@ -30,7 +29,7 @@ func New(c Configuration) *Client {
 	return &Client{
 		apiKey:       c.APIKey,
 		apiSecretKey: c.APISecretKey,
-		s:            astihttp.NewSender(c.Sender),
+		s:            astikit.NewHTTPSender(c.Sender),
 	}
 }
 

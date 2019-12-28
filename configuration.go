@@ -3,7 +3,7 @@ package astitwitter
 import (
 	"flag"
 
-	astihttp "github.com/asticode/go-astitools/http"
+	"github.com/asticode/go-astikit"
 )
 
 // Flags
@@ -16,7 +16,7 @@ var (
 type Configuration struct {
 	APIKey       string `toml:"api_key"`
 	APISecretKey string `toml:"api_secret_key"`
-	Sender       astihttp.SenderOptions
+	Sender       astikit.HTTPSenderOptions
 }
 
 // FlagConfig generates a Configuration based on flags
