@@ -2,9 +2,8 @@ package astitwitter
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
-
-	"github.com/pkg/errors"
 )
 
 type TokenBody struct {
@@ -25,7 +24,7 @@ func (c *Client) bearerToken() (t string, err error) {
 		},
 		&b,
 	); err != nil {
-		err = errors.Wrap(err, "astitwitter: sending failed")
+		err = fmt.Errorf("astitwitter: sending failed: %w", err)
 		return
 	}
 

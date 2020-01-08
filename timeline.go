@@ -6,8 +6,6 @@ import (
 	"net/url"
 	"strconv"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type UserTimelineItem struct {
@@ -78,7 +76,7 @@ func (c *Client) UserTimeline(o UserTimelineOptions) (is []UserTimelineItem, err
 
 	// Send
 	if err = c.sendAuthenticated(http.MethodGet, "/1.1/statuses/user_timeline.json?"+qs.Encode(), nil, nil, &is); err != nil {
-		err = errors.Wrap(err, "astitwitter: sending authenticated failed")
+		err = fmt.Errorf("astitwitter: sending authenticated failed: %w", err)
 		return
 	}
 	return

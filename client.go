@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/asticode/go-astikit"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -56,7 +55,7 @@ func (c *Client) send(method, url string, body io.Reader, reqFunc func(r *http.R
 	// Create request
 	var req *http.Request
 	if req, err = http.NewRequest(method, baseURL+url, body); err != nil {
-		err = errors.Wrapf(err, "astitwitter: creating %s request to %s failed", method, url)
+		err = fmt.Errorf("astitwitter: creating %s request to %s failed: %w", method, url, err)
 		return
 	}
 
@@ -68,7 +67,7 @@ func (c *Client) send(method, url string, body io.Reader, reqFunc func(r *http.R
 	// Send
 	var resp *http.Response
 	if resp, err = c.s.Send(req); err != nil {
-		err = errors.Wrapf(err, "astitwitter: sending %s request to %s failed", req.Method, req.URL.Path)
+		err = fmt.Errorf("astitwitter: sending %s request to %s failed: %w", req.Method, req.URL.Path, err)
 		return
 	}
 	defer resp.Body.Close()
@@ -78,7 +77,7 @@ func (c *Client) send(method, url string, body io.Reader, reqFunc func(r *http.R
 		// Unmarshal
 		var b ErrorBody
 		if err = json.NewDecoder(resp.Body).Decode(&b); err != nil {
-			err = errors.Wrap(err, "astitwitter: unmarshaling errors failed")
+			err = fmt.Errorf("astitwitter: unmarshaling errors failed: %w", err)
 			return
 		}
 
@@ -90,7 +89,7 @@ func (c *Client) send(method, url string, body io.Reader, reqFunc func(r *http.R
 	// Unmarshal
 	if respPayload != nil {
 		if err = json.NewDecoder(resp.Body).Decode(respPayload); err != nil {
-			err = errors.Wrap(err, "astitwitter: unmarshaling failed")
+			err = fmt.Errorf("astitwitter: unmarshaling failed: %w", err)
 			return
 		}
 	}
@@ -102,7 +101,7 @@ func (c *Client) sendAuthenticated(method, url string, body io.Reader, reqFunc f
 	if c.t == "" {
 		// Get bearer token
 		if c.t, err = c.bearerToken(); err != nil {
-			err = errors.Wrap(err, "astitwitter: getting bearer token failed")
+			err = fmt.Errorf("astitwitter: getting bearer token failed: %w", err)
 			return
 		}
 	}
@@ -126,7 +125,7 @@ func (c *Client) sendAuthenticated(method, url string, body io.Reader, reqFunc f
 				if e.Code == errorCodeInvalidOrExpiredToken {
 					// Get bearer token
 					if c.t, err = c.bearerToken(); err != nil {
-						err = errors.Wrap(err, "astitwitter: getting bearer token failed")
+						err = fmt.Errorf("astitwitter: getting bearer token failed: %w", err)
 						return
 					}
 
@@ -144,7 +143,7 @@ func (c *Client) sendAuthenticated(method, url string, body io.Reader, reqFunc f
 
 		// Process error
 		if err != nil {
-			err = errors.Wrap(err, "astitwitter: sending failed")
+			err = fmt.Errorf("astitwitter: sending failed: %w", err)
 			return
 		}
 	}
